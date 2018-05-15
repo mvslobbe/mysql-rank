@@ -1,7 +1,7 @@
 all: clean build
 
 build:
-	gcc -O3 -fPIC -Wall -I /usr/include/mysql/ -I /usr/local/include -c udf_rank.cc -o udf_rank.o
+	gcc -O3 -fPIC -Wall `mysql_config --include` -I /usr/local/include -c udf_rank.cc -o udf_rank.o
 	ld -shared -o udf_rank.so udf_rank.o
 
 clean:

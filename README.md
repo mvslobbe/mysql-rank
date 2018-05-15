@@ -2,7 +2,8 @@
 Custom 'RANK' User Defined Function for Mysql.
 
 # installation
-Run 'Makefile'. This works well on Ubuntu systems.
+Run 'Makefile'. This works well on Ubuntu systems.<BR>
+In mysql, run 'CREATE FUNCTION rank RETURNS INT SONAME 'udf_rank.so';'<BR>
 
 # sample usage
 Consider a datatabase:<BR>
