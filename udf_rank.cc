@@ -53,6 +53,7 @@ SOFTWARE.
 #include <my_sys.h>
 #include <mysql.h>
 #include <pwd.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -88,13 +89,10 @@ extern "C" {
 // We check that the arguments are as expected.
 // We also malloc the buffer and clean it out for first use.
 my_bool rank_init(UDF_INIT* initid, UDF_ARGS* args, char* message) {
-    rank_data* buffer = (rank_data*)malloc(sizeof(rank_data));
+    rank_data* buffer = (rank_data*)calloc(1,sizeof(rank_data));
     buffer->rank = 0;
     buffer->num_stored = args->arg_count;
-    const size_t storage_array_size(buffer->num_stored *
-                                    sizeof(rank_data::storage_t));
-    buffer->storage = (rank_data::storage_t*)malloc(storage_array_size);
-    memset(buffer->storage, 0, storage_array_size);
+    buffer->storage = (rank_data::storage_t*)calloc(buffer->num_stored, sizeof(rank_data::storage_t));
 
     for (size_t i = 0; i < buffer->num_stored; i++) {
         if (args->arg_type[i] == ROW_RESULT) {
@@ -161,7 +159,7 @@ int rank(UDF_INIT* initid, UDF_ARGS* args, char* result, unsigned long* length,
                 double real_val = *((double*)args->args[i]);
                 double prev_val = storage.contents.dbl;
                 // We're dealing with floating point nastiness here..
-                const bool equal = ((real_val - prev_val) < 0.00001);
+                const bool equal = ( fabs(real_val - prev_val) < 0.00001 );
                 all_fields_equal &= equal;
                 storage.contents.dbl = real_val;
                 break;
