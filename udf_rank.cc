@@ -132,6 +132,12 @@ int rank(UDF_INIT* initid, UDF_ARGS* args, char* result, unsigned long* length,
     rank_data* buffer = (rank_data*)initid->ptr;
     bool all_fields_equal = true;
     for (size_t i = 0; i < buffer->num_stored; i++) {
+        // NULL values are represented as such, and when we encounter this in
+        // any of our inputs we return a rank of 0.
+        if( args->args[i]==NULL )
+        {
+            return 0;
+        }
         rank_data::storage_t& storage = buffer->storage[i];
         // We have figured out in the 'init' function what data type to expect.
         // Switch over that here to figure out which functionality to use to
